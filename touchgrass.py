@@ -7,7 +7,8 @@ import random
 pygame.mixer.init()
 
 # sounds = ["moan1.wav", "moan2.wav", "moan3.wav"]
-sounds = ["jingle4.mp3"]
+sounds_dir = ["sounds"]
+sound_files = ["jingle4.mp3"]
 
 # Load the MP3 file
 
@@ -15,7 +16,7 @@ sounds = ["jingle4.mp3"]
 ser = serial.Serial('/dev/tty.usbmodem21401', 9600)  # Replace 'COM3' with your Arduino's serial port
 
 def play_mp3():
-    pygame.mixer.music.load(sounds[random.randint(0,2)])
+    pygame.mixer.music.load(sounds_dir + sound_files[random.randint(0,2)])
     pygame.mixer.music.play()
     while pygame.mixer.music.get_busy():
       pygame.time.Clock().tick(10)
