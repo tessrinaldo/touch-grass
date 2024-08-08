@@ -47,47 +47,70 @@ volume = 5.0  # Maximum volume
 for sound in touchme_sounds + donttouch_sounds:
     sound.set_volume(volume)
 
-# Create channels for simultaneous playback
-channel1 = pygame.mixer.Channel(0)
-channel2 = pygame.mixer.Channel(1)
 
 def is_music_playing():
     return pygame.mixer.music.get_busy()
 
-# def play_mp3():
-#   # Load the MP3 file (replace with your file path)
-#   pygame.mixer.music.load(sounds_dir + sound_files[random.randint(0,2)])
-#   pygame.mixer.music.play()
+# Create channels for simultaneous playback
+pygame.mixer.set_num_channels(3)  # Ensure we have enough channels
+channel1 = pygame.mixer.Channel(0)
+channel2 = pygame.mixer.Channel(1)
+channel3 = pygame.mixer.Channel(2) 
+
+
+def play_sound_once(sound, channel):
+    if not channel.get_busy():
+        channel.play(sound)
+
+def play_loop_sound(loop_sound, channel):
+    channel.play(loop_sound, loops=-1)
+    
+def stop_loop_sound(channel):
+    channel.stop()
+
+def play_mp3():
+  # Load the MP3 file (replace with your file path)
+  pygame.mixer.music.load(sounds_dir + sound_files[random.randint(0,2)])
+  pygame.mixer.music.play()
 
 def play_random_sound(sounds, channel):
     sound = random.choice(sounds)
     channel.play(sound)
 
-touchme_pin = 1
-donttouch_pin = 2
 
+pin1_touched = False
+pin2_touched = False
+pin3_touched = False
 # Main loop
 while True:
-    # touch_states = [cap[i].value for i in range(1, 9)]
-    # print(f"touch states: {touch_states}")
-   
-    if cap[touchme_pin].value == True and not is_music_playing(): # Touched
-        print(f"yesss touch me")
-        play_random_sound(touchme_sounds, channel2)
-        
-        # Wait for the touch to be released
-        while cap[touchme_pin].value == True:
-            print(f"you're still touching me..")   
-            time.sleep(0.1)
+    if cap[1].value:
+        if not pin1_touched:
+            print("yesss touch me")
+            play_loop_sound(random.choice(touchme_sounds), channel1)
+            pin1_touched = True
+    else:
+        stop_loop_sound(channel1)
+        pin1_touched = False
 
-    if cap[donttouch_pin].value == True and not is_music_playing(): # Touched
-        print(f"yesss touch me")
-        play_random_sound(donttouch_sounds, channel2)
-        
-        # Wait for the touch to be released
-        while cap[donttouch_pin].value == True:
-            print(f"you're still touching me..")   
-            time.sleep(0.1)
+    if cap[2].value:
+        if not pin2_touched:
+            print("ew go away")
+            play_loop_sound(random.choice(donttouch_sounds), channel2)
+            pin2_touched = True
+    else:
+        stop_loop_sound(channel2)
+        pin2_touched = False
+    
+    if cap[3].value:
+        if not channel3.get_busy():
+            print("boots & cats")
+            play_loop_sound(pygame.mixer.Sound("sounds/other/amen-break.wav"), channel3)      
+            pin3_touched = True
+    else: 
+        if pin3_touched:
+            print("stopping drums")
+            stop_loop_sound(channel3)
+            pin3_touched = False
         
     if is_music_playing():
         print("audio still playing")

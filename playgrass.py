@@ -115,34 +115,36 @@ def generate_bass_drone(duration=2.0, base_freq=55):
 # Generate bass drone sound
 bass_drone = generate_bass_drone()
 
-# Main loop
-while True:
-    pin2_touched = cap[2].value
-    pin4_touched = cap[4].value
-    pin5_touched = cap[5].value
-    pin6_touched = cap[6].value  # New pin for bass drone
-    
-    if pin2_touched or pin4_touched or pin5_touched or pin6_touched:
-        print("Plant touched! Playing sounds...")
+
+def main():
+    # Main loop
+    while True:
+        pin2_touched = cap[2].value
+        pin4_touched = cap[4].value
+        pin5_touched = cap[5].value
+        pin6_touched = cap[6].value  # New pin for bass drone
         
-        while pin2_touched or pin4_touched or pin5_touched or pin6_touched:
-            if pin2_touched:
-                play_random_note(tones1)
-            if pin4_touched:
-                play_random_note(tones2)
-            if pin5_touched:
-                play_drum()
-            if pin6_touched:
-                bass_drone.play()
+        if pin2_touched or pin4_touched or pin5_touched or pin6_touched:
+            print("Plant touched! Playing sounds...")
             
-            time.sleep(0.05)  # Shorter delay for faster drum pattern
+            while pin2_touched or pin4_touched or pin5_touched or pin6_touched:
+                if pin2_touched:
+                    play_random_note(tones1)
+                if pin4_touched:
+                    play_random_note(tones2)
+                if pin5_touched:
+                    play_drum()
+                if pin6_touched:
+                    bass_drone.play()
+                
+                time.sleep(0.05)  # Shorter delay for faster drum pattern
+                
+                # Update touch status
+                pin2_touched = cap[2].value
+                pin4_touched = cap[4].value
+                pin5_touched = cap[5].value
+                pin6_touched = cap[6].value
             
-            # Update touch status
-            pin2_touched = cap[2].value
-            pin4_touched = cap[4].value
-            pin5_touched = cap[5].value
-            pin6_touched = cap[6].value
+            print("Touch released. Stopping sounds.")
         
-        print("Touch released. Stopping sounds.")
-    
-    time.sleep(0.01)  # Small delay to prevent excessive CPU usage
+        time.sleep(0.01)  # Small delay to prevent excessive CPU usage
