@@ -155,54 +155,16 @@ def generate_ambient_pad(duration=3.0, base_freq=220):
     
     return pygame.sndarray.make_sound(stereo_pad)
 
-def generate_melodic_pad(duration=10.0, base_freq=220):
-    sample_rate = 44100
-    t = np.linspace(0, duration, int(duration * sample_rate), False)
-    
-    # Create a sequence of frequencies (increasing then decreasing)
-    freq_multipliers = [1, 9/8, 5/4, 4/3, 3/2, 5/3, 15/8, 2, 15/8, 5/3, 3/2, 4/3, 5/4, 9/8]
-    frequencies = [base_freq * mult for mult in freq_multipliers]
-    
-    # Generate the evolving pad sound
-    pad = np.zeros_like(t)
-    for i, freq in enumerate(frequencies):
-        start = i * duration / len(frequencies)
-        end = (i + 1) * duration / len(frequencies)
-        note = np.sin(2 * np.pi * freq * t)
-        # Smooth transition between notes
-        envelope = 0.5 - 0.5 * np.cos(2 * np.pi * (t - start) / (end - start))
-        envelope = np.clip(envelope, 0, 1)
-        pad += note * envelope * (t >= start) * (t < end)
-    
-    # Add harmonics for an organ-like timbre
-    pad += 0.5 * np.sin(4 * np.pi * pad)
-    pad += 0.25 * np.sin(6 * np.pi * pad)
-    
-    # Apply a slow LFO for subtle modulation
-    lfo = np.sin(2 * np.pi * 0.1 * t)
-    pad = pad * (1 + lfo * 0.05)
-    
-    # Apply an overall envelope
-    overall_envelope = (1 - np.exp(-t * 2)) * np.exp(-(t - duration) * 0.5)
-    pad = pad * overall_envelope
-    
-    # Normalize and convert to 16-bit PCM
-    pad = (pad / np.max(np.abs(pad)) * 32767 * 0.7).astype(np.int16)
-    stereo_pad = np.column_stack((pad, pad))
-    
-    return pygame.sndarray.make_sound(stereo_pad)
 
 # Generate sounds
 bass_drone = generate_bass_drone()
 glitch_texture = generate_glitch_texture()
 ambient_pad = generate_ambient_pad()
-melodic_pad = generate_melodic_pad()
 
 # Create separate channels for each sound
 bass_channel = pygame.mixer.Channel(0)
 glitch_channel = pygame.mixer.Channel(1)
 ambient_channel = pygame.mixer.Channel(2)
-melodic_channel = pygame.mixer.Channel(3)
 
 # Variables for glitch timing
 last_glitch_time = 0
@@ -242,12 +204,11 @@ while True:
     pin2_touched = cap[2].value
     pin4_touched = cap[4].value
     pin5_touched = cap[5].value
-    pin6_touched = cap[6].value
     
-    if any([pin2_touched, pin4_touched, pin5_touched, pin6_touched, pin7_touched]):
+    if any([pin2_touched, pin4_touched, pin5_touched]):
         print("you touched me!")
         
-        while any([pin2_touched, pin4_touched, pin5_touched, pin6_touched, pin7_touched]):
+        while any([pin2_touched, pin4_touched, pin5_touched]):
             current_time = time.time()
             if pin2_touched and not bass_channel.get_busy():
                 bass_channel.play(bass_drone, loops=-1)
@@ -268,19 +229,12 @@ while True:
             elif not pin5_touched:
                 ambient_channel.stop()
             
-            if pin6_touched and not melodic_channel.get_busy():
-                melodic_channel.play(melodic_pad, loops=-1)
-            elif not pin6_touched:
-                melodic_channel.stop()
-            
             time.sleep(0.05)
             
             # Update touch status
             pin2_touched = cap[2].value
             pin4_touched = cap[4].value
             pin5_touched = cap[5].value
-            pin6_touched = cap[6].value
-            pin7_touched = cap[7].value
         
         # Stop all sounds when touch is released
         bass_channel.stop()

@@ -40,6 +40,10 @@ def generate_tone(freq, duration=0.1):
     
     return pygame.sndarray.make_sound(stereo_waveform)
 
+# Generate tones for each scale
+tones1 = [generate_tone(freq) for freq in scale1]
+tones2 = [generate_tone(freq) for freq in scale2]
+
 def generate_drum_sound(freq, duration=0.1, decay=50):
     sample_rate = 44100
     t = np.linspace(0, duration, int(duration * sample_rate), False)
@@ -58,7 +62,12 @@ snare = generate_drum_sound(180, duration=0.1, decay=40)
 hihat = generate_drum_sound(800, duration=0.05, decay=100)
 
 # Amen break-inspired pattern (1 = kick, 2 = snare, 3 = hihat)
-drum_pattern = [1,3,0,3,2,3,0,3,0,3,0,3,2,3,2,3,1,3,0,3,2,3,0,3,0,3,2,0,2,3,2,3]
+drum_pattern = [
+    1, 3, 0, 3, 2, 3, 0, 3,
+    0, 3, 0, 3, 2, 3, 2, 3,
+    1, 3, 0, 3, 2, 3, 0, 3,
+    0, 3, 2, 0, 2, 3, 2, 3
+]
 drum_index = 0
 
 def play_drum():
@@ -71,9 +80,6 @@ def play_drum():
         hihat.play()
     drum_index = (drum_index + 1) % len(drum_pattern)
 
-# Generate tones for each scale and drum sound
-tones1 = [generate_tone(freq) for freq in scale1]
-tones2 = [generate_tone(freq) for freq in scale2]
 
 def play_random_note(tones):
     tone = random.choice(tones)

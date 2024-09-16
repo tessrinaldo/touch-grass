@@ -105,7 +105,7 @@ while True:
     if cap[3].value:
         if not pin_touched[3]:
             print("boots & cats")
-            play_loop_sound(pygame.mixer.Sound("sounds/other/amen-break.wav"), channel3)      
+            play_loop_sound(pygame.mixer.Sound("sounds/drums/amen-break.wav"), channel3)      
             pin_touched[3] = True
     else: 
         if pin_touched[3]:
