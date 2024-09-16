@@ -66,7 +66,12 @@ snare = generate_drum_sound(180, duration=0.1, decay=40)
 hihat = generate_drum_sound(800, duration=0.05, decay=100)
 
 # Amen break-inspired pattern (1 = kick, 2 = snare, 3 = hihat)
-drum_pattern = [1,3,0,3,2,3,0,3,0,3,0,3,2,3,2,3,1,3,0,3,2,3,0,3,0,3,2,0,2,3,2,3]
+drum_pattern = [
+    1, 3, 0, 3, 2, 3, 0, 3,
+    0, 3, 0, 3, 2, 3, 2, 3,
+    1, 3, 0, 3, 2, 3, 0, 3,
+    0, 3, 2, 0, 2, 3, 2, 3
+]
 drum_index = 0
 
 def play_drum():
@@ -203,16 +208,44 @@ melodic_channel = pygame.mixer.Channel(3)
 last_glitch_time = 0
 glitch_interval = 0
 
+
+# # Main loop
+# while True:
+#     pin2_touched = cap[2].value
+#     pin4_touched = cap[4].value
+#     pin5_touched = cap[5].value
+    
+#     if pin2_touched or pin4_touched or pin5_touched:
+#         print("Plant touched! Playing sounds...")
+        
+#         while pin2_touched or pin4_touched or pin5_touched:
+#             if pin2_touched:
+#                 play_random_note(tones1)
+#             if pin4_touched:
+#                 play_random_note(tones2)
+#             if pin5_touched:
+#                 play_drum()
+            
+#             time.sleep(0.05)  # Shorter delay for faster drum pattern
+            
+#             # Update touch status
+#             pin2_touched = cap[2].value
+#             pin4_touched = cap[4].value
+#             pin5_touched = cap[5].value
+        
+#         print("Touch released. Stopping sounds.")
+    
+#     time.sleep(0.01)  # Small delay to prevent excessive CPU usage
+
 # Main loop
 while True:
     pin2_touched = cap[2].value
     pin4_touched = cap[4].value
     pin5_touched = cap[5].value
     pin6_touched = cap[6].value
-    pin7_touched = cap[7].value
     
     if any([pin2_touched, pin4_touched, pin5_touched, pin6_touched, pin7_touched]):
-        print("Plant touched! Playing sounds...")
+        print("you touched me!")
         
         while any([pin2_touched, pin4_touched, pin5_touched, pin6_touched, pin7_touched]):
             current_time = time.time()
@@ -239,10 +272,6 @@ while True:
                 melodic_channel.play(melodic_pad, loops=-1)
             elif not pin6_touched:
                 melodic_channel.stop()
-
-            if pin7_touched:
-                # You can add another sound here if needed
-                pass
             
             time.sleep(0.05)
             

@@ -148,3 +148,6 @@ def main():
             print("Touch released. Stopping sounds.")
         
         time.sleep(0.01)  # Small delay to prevent excessive CPU usage
+
+if __name__ == "__main__":
+    main()

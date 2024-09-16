@@ -68,9 +68,9 @@ def play_loop_sound(loop_sound, channel):
 def stop_loop_sound(channel):
     channel.stop()
 
-def play_mp3():
+def play_mp3(sounds_dir, sound_files):
   # Load the MP3 file (replace with your file path)
-  pygame.mixer.music.load(sounds_dir + sound_files[random.randint(0,2)])
+  pygame.mixer.music.load(sounds_dir + random.choice(sound_files))
   pygame.mixer.music.play()
 
 def play_random_sound(sounds, channel):
@@ -78,39 +78,40 @@ def play_random_sound(sounds, channel):
     channel.play(sound)
 
 
-pin1_touched = False
-pin2_touched = False
-pin3_touched = False
+pin_touched = {pin: False for pin in range(4)}
+
 # Main loop
 while True:
     if cap[1].value:
-        if not pin1_touched:
+        if not pin_touched[1]:
             print("yesss touch me")
             play_loop_sound(random.choice(touchme_sounds), channel1)
-            pin1_touched = True
+            pin_touched[1] = True
     else:
-        stop_loop_sound(channel1)
-        pin1_touched = False
+        if pin_touched[1]:
+            stop_loop_sound(channel1)
+            pin_touched[1] = False
 
     if cap[2].value:
-        if not pin2_touched:
+        if not pin_touched[2]:
             print("ew go away")
             play_loop_sound(random.choice(donttouch_sounds), channel2)
-            pin2_touched = True
+            pin_touched[2] = True
     else:
-        stop_loop_sound(channel2)
-        pin2_touched = False
+        if pin_touched[2]:
+            stop_loop_sound(channel2)
+            pin_touched[2] = False
     
     if cap[3].value:
-        if not channel3.get_busy():
+        if not pin_touched[3]:
             print("boots & cats")
             play_loop_sound(pygame.mixer.Sound("sounds/other/amen-break.wav"), channel3)      
-            pin3_touched = True
+            pin_touched[3] = True
     else: 
-        if pin3_touched:
+        if pin_touched[3]:
             print("stopping drums")
             stop_loop_sound(channel3)
-            pin3_touched = False
+            pin_touched[3] = False
         
     if is_music_playing():
         print("audio still playing")

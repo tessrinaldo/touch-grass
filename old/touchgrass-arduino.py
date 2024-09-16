@@ -7,7 +7,6 @@ import os
 # Initialize Pygame mixer
 pygame.mixer.init()
 
-# sounds = ["moan1.wav", "moan2.wav", "moan3.wav"]
 sounds_dir = ["sounds"]
 sound_files = ["jingle4.mp3"]
 
