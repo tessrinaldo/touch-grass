@@ -4,5 +4,5 @@ touch grass, make sounds
 
 to run:
 ```
-python touchgrass-raspi.py
+python touchgrass-samples.py
 ```
